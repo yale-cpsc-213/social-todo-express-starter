@@ -45,3 +45,14 @@ you can then run the code like
 `npm start`
 
 which will start it with nodemon, as shown in the `package.json` file.
+
+# Running Mongodb
+
+Clearly, for the application to work, you will need to be running Mongodb.
+There are many ways to do this: running it locally (natively) on your 
+computer, running it in a docker container, or using a hosted service.
+Setting this up will require some research. If you come to office hours,
+you can get assistance based on your preferences and development environment.
+
+In "production", when you deploy your app, you will need Mongodb running 
+somewhere other than your local computer, clearly.
