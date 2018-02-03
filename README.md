@@ -32,9 +32,12 @@ is the entry point, is the only file that reads variables from the environment.
 When I completed the homework, my environment variables looked like this.
 ```
 PORT=5000
-SESSION_SECRET='sdf'
+SESSION_SECRET="NPOicW7oKb4rQKR+tHnMdGm0rh5W/d2/nUL3O0Y+5+E="
 MONGO_URL="mongodb://localhost:27017/social-todo"
 ```
+
+(You can get a good session secret by running the command
+`openssl rand -base64 32` on a system where openssl is installed.)
 
 Having set your environment variables and started MongoDB,
 you can then run the code like
