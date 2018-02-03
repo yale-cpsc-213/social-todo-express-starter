@@ -25,7 +25,7 @@ to use it.
 
 ## Running the code
 
-This code needs a few environment variables in order to run: `DATABASE_URL` and
+This code needs a few environment variables in order to run: `MONGO_URL` and
 `PORT`. You can also specify `HOST` and `SESSION_SECRET`. The `index.js` file, which
 is the entry point, is the only file that reads variables from the environment.
 
