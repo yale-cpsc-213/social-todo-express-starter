@@ -1,11 +1,7 @@
-'use strict';
-
 const mongoose = require('mongoose');
 
-const {
-    Schema,
-    ObjectId,
-} = mongoose;
+const Schema = mongoose.Schema;
+const ObjectId = Schema.ObjectId;
 
 const stringField = {
     type: String,

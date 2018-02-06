@@ -1,4 +1,9 @@
+// eslint no-param-reassign: ["error", { "props": false }]
+// eslint no-underscore-dangle: ["error", { "allow": ["_id"] }]
+
+
 'use strict';
+
 
 const express = require('express');
 const exphbs = require('express-handlebars');
@@ -32,7 +37,7 @@ app.use(bodyParser.urlencoded({
 // Configure session middleware that will parse the cookies
 // of an incoming request to see if there is a session for this cookie.
 app.use(session({
-    secret: process.env.SESSION_SECRET,
+    secret: process.env.SESSION_SECRET || 'super secret session',
     resave: false,
     saveUninitialized: true,
     cookie: {
@@ -123,7 +128,7 @@ app.post('/task/create', (req, res) => {
 });
 
 // Start the server
-app.listen(process.env.PORT, () => {
-    // eslint-disable-next-line no-console
-    console.log(`Example app listening on port ${process.env.PORT}`);
+const port = process.env.PORT || 3500;
+app.listen(port, () => {
+    console.log(`Example app listening on port ${port}`);
 });

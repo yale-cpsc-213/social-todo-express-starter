@@ -1,13 +1,9 @@
-'use strict';
-
 const mongoose = require('mongoose');
 const bcrypt = require('bcrypt');
 
 const SALT_WORK_FACTOR = 10;
 
-const {
-    Schema,
-} = mongoose;
+const Schema = mongoose.Schema;
 
 const stringField = {
     type: String,
@@ -27,7 +23,7 @@ const UserSchema = new Schema({
     hashed_password: stringField,
 });
 
-UserSchema.pre('save', (next) => {
+UserSchema.pre('save', function userPreHook(next) {
     const user = this;
 
     // only hash the password if it has been modified (or is new)
@@ -48,8 +44,9 @@ UserSchema.pre('save', (next) => {
     });
 });
 
-UserSchema.methods.comparePassword = (candidatePassword, cb) => {
+UserSchema.methods.comparePassword = function comparePassword(candidatePassword, cb) {
     bcrypt.compare(candidatePassword, this.hashed_password, (err, isMatch) => {
+        console.log('isMatch = ', isMatch);
         if (err) return cb(err);
         return cb(null, isMatch);
     });

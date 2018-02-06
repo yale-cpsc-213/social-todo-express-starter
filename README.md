@@ -7,7 +7,7 @@ here. The most important are [Express](http://expressjs.com) and
 
 ## Getting started
 
-You will need Node set up on your machine.
+You will need a Node environment and npm.
 Clone the code, `cd` into the
 code's directory and then download your dependencies with
 `npm install`. This will populate your `node_modules` directory
