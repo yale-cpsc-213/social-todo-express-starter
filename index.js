@@ -12,6 +12,7 @@ const session = require('express-session');
 const MongoDBStore = require('connect-mongodb-session')(session);
 const mongoose = require('mongoose');
 const validator = require('validator');
+var helpers = require('handlebars-helpers')(['regex', 'string']);
 
 const app = express();
 mongoose.connect(process.env.MONGO_URL);
@@ -61,6 +62,7 @@ app.use((req, res, next) => {
     }
 });
 
+
 /**
  * Middleware that checks if a user is logged in.
  * If so, the request continues to be processed, otherwise a
@@ -86,7 +88,16 @@ function isLoggedIn(req, res, next) {
  * @returns {undefined}
  */
 function loadUserTasks(req, res, next) {
-    // Removed
+    // if(!res.locals.currentUser){
+    //     res.redirect('/'),
+    //     res.render("index");
+    // }
+    // Tasks.find({owner: res.locals.currentUser}, function(err,tasks){
+    //     if(!err){
+    //         res.locals.Tasks = Tasks;
+    //     }
+    //     next();
+    // });
     next();
 }
 
@@ -95,19 +106,71 @@ app.get('/', loadUserTasks, (req, res) => {
     res.render('index');
 });
 
+
 // Handle submitted form for new users
 app.post('/user/register', (req, res) => {
-    res.send('woot');
+    var newUser = new Users();
+    newUser.hashed_password = req.body.password;
+    newUser.email = req.body.email;
+    newUser.name = req.body.name
+    newUser.save(function(err, user){
+        if(user && !err){
+	    	console.log('User resgistered. Logged in.\n');
+	      	req.session.userId = user._id;
+	      	res.redirect('/');
+	      	return;
+	    }
+    	var errors = "Error registering you.";
+	    if(err){
+	      if(err.errmsg && err.errmsg.match(/duplicate/)){
+	        errors = "Account with this email already exists!";
+	      }
+	      return res.render('index');
+	    }
+  		}
+  	);
+    //     console.log("added new user", user)
+    //     if(err){
+    //         res.send('there was an error saving the user');
+    //     }
+    //     else{
+    //         res.redirect('/');
+    //     }
+    // })
+    // res.send(req.body);
+    // console.log('the user has the email address', req.body.email)
 });
 
-app.post('/user/login', (req, res) => {
-    res.send('woot');
+app.post('/user/login',  function(req, res) {
+    Users.findOne({email: req.body.email}, function(err, user) {
+        console.log(user);
+        res.locals.currentUser = user;
+        res.locals.userId = user._id;
+		if(err || !user) {
+			res.render('index', {errors: "Invalid email address"});
+			return;
+		}
+		user.comparePassword(req.body.password, function(err, isMatch) {
+			if(err || !isMatch){
+				res.render('index', {errors: 'Invalid password'});
+				console.log('\n\nInvalid password.\n\n');
+				return;
+	   		}
+		   	else{
+				req.session.userId = user._id;
+				res.redirect('/');
+				return;
+		   	}
+
+		});
+	});
 });
 
 // Log a user out
 app.get('/user/logout', (req, res) => {
-    res.send('woot');
-});
+        //req.session.destroy(function(){
+          res.redirect('/user/login');
+        });
 
 //  All the controllers and routes below this require
 //  the user to be logged in.
@@ -123,8 +186,30 @@ app.post('/tasks/:id/delete', (req, res) => {
 });
 
 // Handle submission of new task form
-app.post('/task/create', (req, res) => {
-    res.send('woot');
+app.post('/task/create', function(req, res) {
+    var newTask = new Tasks();
+
+	newTask.owner = res.locals.currentUser._id;
+	newTask.title = req.body.title;
+	newTask.description = req.body.description;
+	newTask.collaborator1 = req.body.collaborator1;
+	newTask.collaborator2 = req.body.collaborator2;
+	newTask.collaborator3 = req.body.collaborator3;
+	newTask.isComplete = false;
+
+	console.log("Creating task...\n");
+	newTask.save(function(err, task) {
+		if(err || !task) {
+			console.log('Error saving task to the database.');
+			res.render('index', { errors: 'Error saving task to the database.'} );
+		}
+		else {
+			// console.log('New task added: ', task.title);
+			res.redirect('/');
+		}
+	});
+
+
 });
 
 // Start the server

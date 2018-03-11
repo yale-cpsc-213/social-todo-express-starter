@@ -3,10 +3,11 @@
 {{#if errors}}
 <ul style="color:red" class="errors">
   {{#each errors}}
-    {{this}}
+    <p class ="errors"> {{this}}</p>
   {{/each}}
 </div>
 {{/if}}
+
 
 {{#if currentUser}}
     <h2 class="welcome">Welcome, {{currentUser.name}}</h2>
@@ -25,17 +26,50 @@
     <hr>
     <div>
         <h4>Add a new task</h4>
+        <form action="/task/create" method = "POST">
+        Task Title <input name= "title" type= "text"><br>
+        Task Description <input name = "description" type= "text" maxlength="500"><br>
+        Collaborators <br>
+         <input name= "collaborator1" type= "email"><br>
+         <input name = "collaborator2" type= "email"><br>
+         <input name = "collaborator3" type= "email"><br>
+        <input type="submit">
         </form>
     </div>
 
 {{else}}
 <div>
-  Login
+<form class ="login-form" action="/user/login" method="POST">
+<label for="email"> Email</label> 
+<input type="email" name="email" required minlength="6" maxlength="50" placeholder="your email address">
+<label for="password">Password</label>  
+<input type="password" name="password" required minlength="6" maxlength="50" placeholder="your password">
+<input type="submit">
+</form>
 </div>
 
 <div><hr></div>
 
 <div>
   Register
+  <div>
+<form class="register" action="/user/register" method="POST">
+<input type="text" name="fl_name" required minlength="1" maxlength="50" placeholder="your full name">
+<input type="email" name="email" required minlength="2" maxlength="50"placeholder="email">
+<input type="password" name="password" required minlength="6" maxlength="50" placeholder="password" id="password">
+<input type="password" name="password_confirm" required placeholder="your password confirmation" id="password_confirm" oninput="check(this)">
+<script language='javascript' type='text/javascript'>
+    function check(input) {
+        if (input.value != document.getElementById('password').value) {
+            input.setCustomValidity('Password Must be Matching.');
+        } else {
+            // input is valid -- reset the error message
+            input.setCustomValidity('');
+        }
+    }
+</script>
+<input type="submit">
+</form>
+</div>
 </div>
 {{/if}}
